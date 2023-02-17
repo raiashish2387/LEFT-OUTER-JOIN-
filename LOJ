@@ -1,0 +1,142 @@
+create or replace table AR_Broker
+(Broker_ID INT Primary Key,
+ Broker_Code varchar(12),
+ Broker_Name varchar(35),
+ Distribution_network varchar (25),
+ Distribution_Channel varchar (20),
+ Commission_Scheme varchar (20)
+)
+
+Drop Table AR_Broker;
+create or replace table AR_Product
+(Product_ID INT Primary Key,
+Product_Category Varchar (25),
+Product_Sub_Category Varchar (25), 
+Product Varchar (12)
+)
+Drop Table AR_Product;
+create or replace table AR_Regions
+(
+ID INT primary Key,
+Name varchar (30),
+Country varchar (90),
+State_code varchar (4),
+State Varchar (30),
+Type Varchar (30),
+Latitude INT,
+Longitude INT,
+area_code Varchar (25),
+Population Number(10,0),
+Households INT,
+Median_Income Number (10,0),
+Land_Area Number (10,0),
+water_area Number (10,0),
+time_zone varchar (30)
+)
+Drop Table AR_Regions;
+create or replace table AR_Customers
+(
+Customer_ID INT Primary key,
+Last_Name Varchar(30),
+Firts_Name Varchar(30),
+Birth_Date Date,
+Gender varchar (10),
+Product_type Varchar(30),
+Region_ID INT,
+Marital_Status Varchar (15)
+)
+Drop Table AR_Customers;
+Select distinct*from AR_Customers;
+create or replace table AR_State_Regions
+(
+State_Code Varchar(4) primary key,
+State Varchar(20),
+Region Varchar(15)
+)
+create or replace table AR_Priorties
+(
+ID INT primary key,
+Description varchar(10)
+)
+create or replace table AR_Statues
+(
+ID INT Primary Key,
+Description Varchar(15)
+)
+create or replace table AR_Catogries
+(
+ID INT Primary key,
+Description Varchar (80),
+Active INT
+)
+create or replace table AR_Sources
+(
+ID INT Primary Key,
+Description Varchar (25)
+)
+Drop Table AR_Sources;
+create or replace table AR_Types
+(
+ID INT Primary Key,
+Description Varchar (15)
+)
+create or replace table AR_Complaints_Data
+(
+ID INT,
+Complain_Date DATE,
+Completion_Date DATE,
+Customer_ID INT Primary Key,
+Broker_ID INT,
+Product_ID INT,
+Customer_Prority_ID INT,
+Complaint_type_ID INT,
+Complaint_Source_ID INT,
+Complain_Category_ID INT,
+Complain_Status_ID INT,
+Administrator_ID INT,
+Client_Satisfaction Varchar (8),
+Expected_Reimbursement Number (5,0)
+)
+select distinct*from AR_Complaints_Data;
+create or replace table AR_Status_History_Data
+(
+ID INT,
+Complaint_ID INT Primary Key,
+Complaint_Status_ID INT,
+Status_Date Date  
+)
+select distinct* from AR_Status_History_Data;
+create or replace table AR_Cust_Master as 
+select Firts_Name, Complain_Date DATE,Completion_Date DATE, ARCO.Complain_Status_ID,ASH_ID,ARCU.Region,AR.State_Code, ARCO.Broker_ID,ARPR.Product_ID,ARCO.Complaint_Source_ID,ARCO.Complain_Status_ID,
+ARCO.Complaint_type_ID,
+---ARCO.*,ARCU.*,ASH.*,ASR.*,AR.*,AB.*,AC.*,AP.*,ARPR.*,ARS.*,AST.*,ART.*
+from  AR_Complaints_Data as ARCO
+left outer join  AR_Customers as ARCU on ARCO.Customer_ID=ARCU.Customer_ID
+left outer join AR_Status_History_Data as ASH on ARCO.ID=ASH.ID
+left outer join AR_Regions as AR on ARCU.Region_ID=AR.ID
+left outer join AR_State_Regions as ASR on AR.State_Code=ASR.State_Code
+left outer join Ar_Broker as AB on ARCO.Broker_ID=AB.Broker_ID
+left outer join AR_Catogries as AC on ARCO.ID=AC.ID
+left outer join AR_Priorties as AP on ARCO.ID=AP.ID
+left outer join AR_Product as ARPR on ARCO.Product_ID=ARPR.Product_ID
+left outer join AR_Sources as ARS on ARCO.Complaint_Source_ID=ARS.ID
+left outer join AR_Statues as AST on ARCO.Complain_Status_ID=AST.ID
+left outer join AR_Types as ART on ARCO.Complaint_type_ID=ART.ID
+
+create or replace table AR_Cust_Master as 
+select Firts_Name, Complain_Date,Completion_Date, ARCO.Complain_Status_ID,ASH.ID,ARCU.Region_ID,AR.State_Code, ARCO.Broker_ID,ARPR.Product_ID,ARCO.Complaint_Source_ID,
+ARCO.Complaint_type_ID
+from  AR_Complaints_Data as ARCO
+left outer join  AR_Customers as ARCU on ARCO.Customer_ID=ARCU.Customer_ID
+left outer join AR_Status_History_Data as ASH on ARCO.ID=ASH.ID
+left outer join AR_Regions as AR on ARCU.Region_ID=AR.ID
+left outer join AR_State_Regions as ASR on AR.State_Code=ASR.State_Code
+left outer join Ar_Broker as AB on ARCO.Broker_ID=AB.Broker_ID
+left outer join AR_Catogries as AC on ARCO.ID=AC.ID
+left outer join AR_Priorties as AP on ARCO.ID=AP.ID
+left outer join AR_Product as ARPR on ARCO.Product_ID=ARPR.Product_ID
+left outer join AR_Sources as ARS on ARCO.Complaint_Source_ID=ARS.ID
+left outer join AR_Statues as AST on ARCO.Complain_Status_ID=AST.ID
+left outer join AR_Types as ART on ARCO.Complaint_type_ID=ART.ID
+
+select*from AR_Cust_Master
